@@ -14,7 +14,7 @@
 
 [package]
 name = "datasketches"
-version = "0.1.0"
+version = "0.1.1"
 description = "The Apache DataSketches Library for Rust"
 keywords = ["streaming", "sketch", "stochastic"]
 authors = ["Filippo Rossi"]
