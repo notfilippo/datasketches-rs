@@ -25,7 +25,7 @@ use super::HllType;
 /// This is a high performance implementation of Phillipe Flajolet's HLL sketch but with
 /// significantly improved error behavior.  If the ONLY use case for sketching is counting
 /// uniques and merging, the HLL sketch is a reasonable choice, although the highest performing in terms of accuracy for
-/// storage space consumed is CPC (Compressed Probabilistic Counting). For large enough counts, this HLL version (with HLL_4) can be 2 to
+/// storage space consumed is CPC (Compressed Probabilistic Counting). For large enough counts, this HLL version (with [HllType::HLL4]) can be 2 to
 /// 16 times smaller than the Theta sketch family for the same accuracy.
 ///
 /// This implementation offers three different types of HLL sketch, each with different
@@ -49,9 +49,9 @@ use super::HllType;
 /// to and from off-heap memory-mapped files, for example, and eliminates big garbage collection
 /// delays.
 ///
-/// author Jon Malkin
-/// author Lee Rhodes
-/// author Kevin Lang
+/// - author Jon Malkin
+/// - author Lee Rhodes
+/// - author Kevin Lang
 pub struct HllSketch(pub(crate) UniquePtr<hll_sketch>);
 
 impl Default for HllSketch {

@@ -42,9 +42,9 @@ use super::{sketch::HllSketch, HllType};
 /// Second, the internal effective value of log-base-2 of `k` for the union operation can
 /// change dynamically based on the smallest `lg_config_k` that the union operation has seen.
 ///
-/// author Jon Malkin
-/// author Lee Rhodes
-/// author Kevin Lang
+/// - author Jon Malkin
+/// - author Lee Rhodes
+/// - author Kevin Lang
 pub struct HllUnion(pub(crate) UniquePtr<hll_union>);
 
 impl Default for HllUnion {

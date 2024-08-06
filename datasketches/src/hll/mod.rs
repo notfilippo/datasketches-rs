@@ -38,7 +38,7 @@ pub mod union;
 /// The memory (and also the serialization) of the sketch during this early warmup phase starts
 /// out very small (8 bytes, when empty) and then grows in increments of 4 bytes as required
 /// until the full HLL array is allocated.  This transition point occurs at about 10% of K for
-/// sketches where lg_config_k is > 8.
+/// sketches where `lg_config_k` is > 8.
 pub enum HllType {
     /// This uses a 4-bit field per HLL bucket and for large counts may require
     /// the use of a small internal auxiliary array for storing statistical exceptions, which are rare.
