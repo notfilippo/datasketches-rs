@@ -23,9 +23,9 @@ pub enum HllType {
     HLL8,
 }
 
-impl Into<target_hll_type> for HllType {
-    fn into(self) -> target_hll_type {
-        match self {
+impl From<HllType> for target_hll_type {
+    fn from(value: HllType) -> Self {
+        match value {
             HllType::HLL4 => target_hll_type::HLL_4,
             HllType::HLL6 => target_hll_type::HLL_6,
             HllType::HLL8 => target_hll_type::HLL_8,
