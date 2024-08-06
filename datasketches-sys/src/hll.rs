@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use cxx::UniquePtr;
-
 #[cxx::bridge(namespace = "datasketches")]
 pub mod ffi {
     #[repr(i32)]
@@ -101,16 +99,12 @@ pub mod ffi {
         pub type hll_union;
 
         fn hll_union_new(lg_config_k: u8) -> UniquePtr<hll_union>;
+        fn hll_union_get_result(
+            union_: &hll_union,
+            tgt_type: target_hll_type,
+        ) -> UniquePtr<hll_sketch>;
 
         pub fn reset(self: Pin<&mut hll_union>);
-
-        pub fn get_estimate(&self) -> f64;
-        pub fn get_composite_estimate(&self) -> f64;
-        pub fn get_lower_bound(&self, num_std_dev: u8) -> f64;
-        pub fn get_upper_bound(&self, num_std_dev: u8) -> f64;
-        pub fn get_lg_config_k(&self) -> u8;
-        pub fn get_target_type(&self) -> target_hll_type;
-        pub fn is_empty(&self) -> bool;
 
         #[rust_name=update_sketch]
         pub fn update(self: Pin<&mut hll_union>, sketch: &hll_sketch);
@@ -136,55 +130,25 @@ pub mod ffi {
         pub fn update(self: Pin<&mut hll_union>, datum: f64);
         #[rust_name=update_f32]
         pub fn update(self: Pin<&mut hll_union>, datum: f32);
-    }
-}
 
-impl ffi::hll_sketch {
-    pub fn new(
-        lg_config_k: u8,
-        tgt_type: ffi::target_hll_type,
-        start_full_size: bool,
-    ) -> UniquePtr<Self> {
-        ffi::hll_sketch_new(lg_config_k, tgt_type, start_full_size)
-    }
-
-    pub fn deserialize(bytes: &[u8]) -> UniquePtr<Self> {
-        ffi::hll_sketch_deserialize(bytes)
-    }
-
-    pub fn serialize_compact(&self, header_size_bytes: usize) -> Vec<u8> {
-        ffi::hll_sketch_serialize_compact(self, header_size_bytes)
-    }
-
-    pub fn serialize_updatable(&self) -> Vec<u8> {
-        ffi::hll_sketch_serialize_updatable(self)
-    }
-
-    pub fn to_string(&self, summary: bool, detail: bool, aux_detail: bool, all: bool) -> String {
-        ffi::hll_sketch_to_string(self, summary, detail, aux_detail, all)
-    }
-
-    pub fn clone_raw(&self) -> UniquePtr<Self> {
-        ffi::hll_sketch_copy(self)
-    }
-
-    pub fn clone_raw_with_target(&self, tgt_type: ffi::target_hll_type) -> UniquePtr<Self> {
-        ffi::hll_sketch_copy_with_target(self, tgt_type)
-    }
-}
-
-impl std::fmt::Debug for ffi::hll_sketch {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string(true, false, false, false))
+        pub fn get_estimate(&self) -> f64;
+        pub fn get_composite_estimate(&self) -> f64;
+        pub fn get_lower_bound(&self, num_std_dev: u8) -> f64;
+        pub fn get_upper_bound(&self, num_std_dev: u8) -> f64;
+        pub fn get_lg_config_k(&self) -> u8;
+        pub fn get_target_type(&self) -> target_hll_type;
+        pub fn is_empty(&self) -> bool;
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use cxx::UniquePtr;
+
     use super::*;
 
     fn dummy_hll() -> UniquePtr<ffi::hll_sketch> {
-        let mut hll = ffi::hll_sketch::new(21, ffi::target_hll_type::HLL_4, false);
+        let mut hll = ffi::hll_sketch_new(12, ffi::target_hll_type::HLL_4, false);
         hll.pin_mut().update_i8(-1);
         hll.pin_mut().update_i8(1);
         hll.pin_mut().update_i8(7);
@@ -201,16 +165,16 @@ mod tests {
     fn serde() {
         let hll = dummy_hll();
 
-        let compact_hll = ffi::hll_sketch::deserialize(&hll.serialize_compact(0));
+        let compact_hll = ffi::hll_sketch_deserialize(&ffi::hll_sketch_serialize_compact(&hll, 0));
         assert_eq!(
-            hll.to_string(true, true, true, true),
-            compact_hll.to_string(true, true, true, true)
+            ffi::hll_sketch_to_string(&hll, true, true, true, true),
+            ffi::hll_sketch_to_string(&compact_hll, true, true, true, true),
         );
 
-        let updatable_hll = ffi::hll_sketch::deserialize(&hll.serialize_updatable());
+        let updatable_hll = ffi::hll_sketch_deserialize(&ffi::hll_sketch_serialize_updatable(&hll));
         assert_eq!(
-            hll.to_string(true, true, true, true),
-            updatable_hll.to_string(true, true, true, true)
+            ffi::hll_sketch_to_string(&hll, true, true, true, true),
+            ffi::hll_sketch_to_string(&updatable_hll, true, true, true, true),
         )
     }
 }

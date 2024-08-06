@@ -12,9 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[workspace]
-resolver = "2"
-members = ["datasketches", "datasketches-sys"]
+[package]
+name = "datasketches"
+version = "0.1.0"
+description = "The Apache DataSketches Library for Rust"
+keywords = ["streaming", "sketch", "stochastic"]
+authors = ["Filippo Rossi"]
+license = "Apache-2.0"
+edition = "2021"
+repository = "https://github.com/notfilippo/datasketches-rs"
+readme = "README.md"
 
-[workspace.dependencies]
-cxx = "1.0"
+[dependencies]
+cxx = { workspace = true }
+datasketches-sys = { path = "../datasketches-sys", version = "0.1.1" }
+
+[dev-dependencies]
+rand = "0.8"
