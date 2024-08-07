@@ -40,7 +40,7 @@ namespace datasketches
     return std::unique_ptr<hll_sketch>(new hll_sketch(hll_sketch::deserialize((const void *)(bytes.data()), bytes.length())));
   }
 
-  rust::Vec<uint8_t> hll_sketch_serialize_compact(const hll_sketch &self, size_t header_size_bytes = 0)
+  rust::Vec<uint8_t> hll_sketch_serialize_compact(const hll_sketch &self, unsigned header_size_bytes = 0)
   {
     hll_sketch::vector_bytes bytes = self.serialize_compact(header_size_bytes);
     rust::Vec<uint8_t> vec;
@@ -68,6 +68,11 @@ namespace datasketches
   inline std::unique_ptr<hll_union> hll_union_new(uint8_t lg_config_k)
   {
     return std::unique_ptr<hll_union>(new hll_union(lg_config_k));
+  }
+
+  inline std::unique_ptr<hll_union> hll_union_copy(const hll_union &self)
+  {
+    return std::unique_ptr<hll_union>(new hll_union(self));
   }
 
   inline std::unique_ptr<hll_sketch> hll_union_get_result(const hll_union &self, target_hll_type tgt_type = HLL_4)

@@ -15,9 +15,11 @@
 //! The hll module contains a set of very compact implementations of Phillipe
 //! Flajolet’s HyperLogLog (HLL) sketch but with significantly improved error
 //! behavior and excellent speed performance.
+//!
 //! If the use case for sketching is primarily counting uniques and merging, the
 //! HLL sketch is the 2nd highest performing in terms of accuracy for storage
 //! space consumed (the new CPC sketch developed by Kevin J. Lang now beats HLL).
+//!
 //! For large counts, HLL sketches can be 2 to 16 times smaller for the same
 //! accuracy than the Theta Sketches mentioned above, and the CPC sketch is
 //! another 30 to 40% smaller still.
@@ -26,6 +28,9 @@ use datasketches_sys::hll::ffi::target_hll_type;
 
 pub mod sketch;
 pub mod union;
+
+pub use sketch::*;
+pub use union::*;
 
 /// Specifies the target type of HLL sketch to be created. It is a target in that the actual
 /// allocation of the HLL array is deferred until sufficient number of items have been received by
@@ -59,9 +64,9 @@ pub enum HllType {
 impl From<HllType> for target_hll_type {
     fn from(value: HllType) -> Self {
         match value {
-            HllType::HLL4 => target_hll_type::HLL_4,
-            HllType::HLL6 => target_hll_type::HLL_6,
-            HllType::HLL8 => target_hll_type::HLL_8,
+            HllType::HLL4 => Self::HLL_4,
+            HllType::HLL6 => Self::HLL_6,
+            HllType::HLL8 => Self::HLL_8,
         }
     }
 }

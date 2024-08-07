@@ -47,8 +47,8 @@ Note that Apache has a parallel core component for [C++](https://github.com/apac
 | `hll_sketch`                                             | ✅         |
 | `hll_union`                                              | ✅         |
 | CPC                                                      | -         |
-| `cpc_sketch`                                             | no        |
-| `cpc_union`                                              | no        |
+| `cpc_sketch`                                             | ✅         |
+| `cpc_union`                                              | ✅         |
 | VarOpt Sampling                                          | -         |
 | `var_opt_sketch`                                         | no        |
 | `var_opt_union`                                          | no        |

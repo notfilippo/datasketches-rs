@@ -18,7 +18,7 @@ use crate::macros::*;
 use std::ops::Deref;
 
 use cxx::{let_cxx_string, UniquePtr};
-use datasketches_sys::hll::ffi::*;
+use datasketches_sys::hll::{ffi::*, DEFAULT_LG_CONFIG_K};
 
 use super::HllType;
 
@@ -56,7 +56,7 @@ pub struct HllSketch(pub(crate) UniquePtr<hll_sketch>);
 
 impl Default for HllSketch {
     fn default() -> Self {
-        Self::new(12, HllType::HLL4, false)
+        Self::new(DEFAULT_LG_CONFIG_K, HllType::HLL4, false)
     }
 }
 
@@ -74,11 +74,12 @@ impl std::fmt::Display for HllSketch {
 
 impl HllSketch {
     /// Constructs a new HLL sketch.
-    /// - `lg_config_k` Sketch can hold 2^lg_config_k rows
-    /// - `tgt_type` The HLL mode to use, if/when the sketch reaches that state
-    /// - `start_full_size` Indicates whether to start in HLL mode,
-    /// keeping memory use constant (if HLL_6 or HLL_8) at the cost of
-    /// starting out using much more memory
+    /// - `lg_config_k`: Sketch can hold 2^lg_config_k rows. The value must be between
+    ///   7 and 21, inclusive.
+    /// - `tgt_type`: The HLL mode to use, if/when the sketch reaches that state
+    /// - `start_full_size`: Indicates whether to start in HLL mode,
+    ///   keeping memory use constant (if [HllType::HLL6] or [HllType::HLL8]) at the cost of
+    ///   starting out using much more memory
     pub fn new(lg_config_k: u8, tgt_type: HllType, start_full_size: bool) -> Self {
         Self(hll_sketch_new(
             lg_config_k,
@@ -96,9 +97,9 @@ impl HllSketch {
     /// Serializes the sketch to a byte array, compacting data structures
     /// where feasible to eliminate unused storage in the serialized image.
     /// - `header_size_bytes` Allows for PostgreSQL integration, otherwise
-    /// set it to 0.
+    ///   set it to 0.
     #[inline]
-    pub fn serialize_compact(&self, header_size_bytes: usize) -> Vec<u8> {
+    pub fn serialize_compact(&self, header_size_bytes: u32) -> Vec<u8> {
         hll_sketch_serialize_compact(&self.0, header_size_bytes)
     }
 
@@ -131,7 +132,7 @@ impl HllSketch {
     #[inline]
     pub fn update_string(&mut self, datum: &str) {
         let_cxx_string!(raw_datum = datum);
-        self.0.pin_mut().update_string(raw_datum.deref())
+        self.0.pin_mut().update_string(raw_datum.deref());
     }
 
     wrap_mut!(

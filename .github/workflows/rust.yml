@@ -19,9 +19,33 @@ jobs:
           submodules: "true"
       - name: Build
         run: cargo build --verbose
-      - name: Run tests
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+      - name: Test
         run: cargo test --verbose
-      - name: Check formatting
+
+  clippy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "true"
+      - name: Clippy
         run: cargo fmt --check
-      - name: Check clippy
-        run: cargo clippy

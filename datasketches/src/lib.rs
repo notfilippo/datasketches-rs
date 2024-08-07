@@ -16,5 +16,6 @@
 
 //! # The Apache DataSketches Library for Rust
 
+pub mod cpc;
 pub mod hll;
 mod macros;

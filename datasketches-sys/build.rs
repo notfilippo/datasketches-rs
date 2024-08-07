@@ -36,7 +36,7 @@ fn main() {
         .iter()
         .map(|module| vendor_path.join(module).join("include"));
 
-    cxx_build::bridges(["src/hll.rs"]) // returns a cc::Build
+    cxx_build::bridges(["src/hll.rs", "src/cpc.rs"]) // returns a cc::Build
         .includes(vendor_includes)
         .include("src")
         .std("c++17")

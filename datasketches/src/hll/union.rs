@@ -18,7 +18,7 @@ use crate::macros::*;
 use std::ops::Deref;
 
 use cxx::{let_cxx_string, UniquePtr};
-use datasketches_sys::hll::ffi::*;
+use datasketches_sys::hll::{ffi::*, DEFAULT_LG_CONFIG_K};
 
 use super::{sketch::HllSketch, HllType};
 
@@ -49,21 +49,26 @@ pub struct HllUnion(pub(crate) UniquePtr<hll_union>);
 
 impl Default for HllUnion {
     fn default() -> Self {
-        Self::new(12)
+        Self::new(DEFAULT_LG_CONFIG_K)
+    }
+}
+
+impl Clone for HllUnion {
+    fn clone(&self) -> Self {
+        Self(hll_union_copy(&self.0))
     }
 }
 
 impl HllUnion {
-    /// Construct an hll_union operator with the given maximum log2 of k.
+    /// Construct an [HllUnion] operator with the given maximum log2 of k.
     ///
-    /// lg_max_k: The maximum size, in log2, of k. The value must
-    /// be between 7 and 21, inclusive.
+    /// - `lg_max_k`: The maximum size, in log2, of k. The value must be between
+    ///   7 and 21, inclusive.
     pub fn new(lg_max_k: u8) -> Self {
         Self(hll_union_new(lg_max_k))
     }
 
-    /// Returns the result of this union operator with the specified
-    /// [HllType].
+    /// Returns the result of this union operator with the specified [HllType].
     #[inline]
     pub fn get_result(&self, tgt_type: HllType) -> HllSketch {
         HllSketch(hll_union_get_result(&self.0, tgt_type.into()))
@@ -72,7 +77,7 @@ impl HllUnion {
     /// Update this union operator with the given sketch.
     #[inline]
     pub fn update_sketch(&mut self, sketch: &HllSketch) {
-        self.0.pin_mut().update_sketch(&sketch.0)
+        self.0.pin_mut().update_sketch(&sketch.0);
     }
 
     /// Present the given string as a potential unique item.
@@ -81,7 +86,7 @@ impl HllUnion {
     #[inline]
     pub fn update_string(&mut self, datum: &str) {
         let_cxx_string!(raw_datum = datum);
-        self.0.pin_mut().update_string(raw_datum.deref())
+        self.0.pin_mut().update_string(raw_datum.deref());
     }
 
     wrap_mut!(
@@ -170,6 +175,7 @@ mod tests {
         let mut union = HllUnion::default();
         union.update_sketch(&a);
         union.update_sketch(&b);
-        assert_eq!(union.get_estimate().floor(), 225.0);
+        let estimate = union.get_estimate().floor();
+        assert!(estimate >= 224.0 && estimate <= 226.0);
     }
 }

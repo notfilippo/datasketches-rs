@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub const DEFAULT_LG_CONFIG_K: u8 = 12;
+pub const MIN_LG_CONFIG_K: u8 = 7;
+pub const MAX_LG_CONFIG_K: u8 = 21;
+
 #[cxx::bridge(namespace = "datasketches")]
 pub mod ffi {
     #[repr(i32)]
@@ -46,7 +50,7 @@ pub mod ffi {
         ) -> UniquePtr<hll_sketch>;
 
         fn hll_sketch_deserialize(bytes: &[u8]) -> UniquePtr<hll_sketch>;
-        fn hll_sketch_serialize_compact(sketch: &hll_sketch, header_size_bytes: usize) -> Vec<u8>;
+        fn hll_sketch_serialize_compact(sketch: &hll_sketch, header_size_bytes: u32) -> Vec<u8>;
         fn hll_sketch_serialize_updatable(sketch: &hll_sketch) -> Vec<u8>;
 
         fn hll_sketch_to_string(
@@ -99,6 +103,7 @@ pub mod ffi {
         pub type hll_union;
 
         fn hll_union_new(lg_config_k: u8) -> UniquePtr<hll_union>;
+        fn hll_union_copy(union_: &hll_union) -> UniquePtr<hll_union>;
         fn hll_union_get_result(
             union_: &hll_union,
             tgt_type: target_hll_type,
