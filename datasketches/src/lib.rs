@@ -13,8 +13,7 @@
 // limitations under the License.
 
 #![deny(missing_docs)]
-
-//! # The Apache DataSketches Library for Rust
+#![doc = include_str!("../../README.md")]
 
 pub mod cpc;
 pub mod hll;

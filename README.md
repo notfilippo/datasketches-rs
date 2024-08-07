@@ -1,8 +1,8 @@
 # The Apache DataSketches Library for Rust
 
-![Crates.io Version](https://img.shields.io/crates/v/datasketches)
-![Crates.io Version](https://img.shields.io/crates/l/datasketches)
-![docs.rs](https://img.shields.io/docsrs/datasketches)
+[<img src="https://img.shields.io/crates/v/datasketches" alt="Crates.io Version" />](https://crates.io/crates/datasketches)
+[<img src="https://img.shields.io/crates/l/datasketches" alt="Crates.io License" />](https://crates.io/crates/datasketches)
+[<img src="https://img.shields.io/docsrs/datasketches" alt="docs.rs Documentation" />](https://docs.rs/datasketches/latest/datasketches/)
 
 This is the core Rust component of the Apache DataSketches library. It contains some of the key sketching algorithms that are in the C++ component and can be accessed directly from user applications.
 
